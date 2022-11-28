@@ -38,8 +38,9 @@ function Layout({children},props) {
                 <DrawerMenu items={navItems} handleDrawerToggle={handleDrawerToggle} />
           </Drawer>
       </Box>
-      <Box component="main" sx={{ p: 3 }}>
+      <Box component="main" sx={{ p: 3, width:'80vh', minWidth: '80vh' }}>
         <Toolbar />
+        {/* ____________________________________________________________________________________________________________________________ */}
         {children}
       </Box>
     </Box>
