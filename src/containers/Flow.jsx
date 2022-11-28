@@ -5,56 +5,134 @@ import ReactFlow, {
                     applyNodeChanges,
                     applyEdgeChanges,
                     addEdge,
+                    ReactFlowProvider, 
+                    useReactFlow
                    } from 'reactflow';
-import 'reactflow/dist/style.css';
 
-const initialNodes = [
+import TextUpdaterNode from '../components/TextUpdaterNode';
+
+import 'reactflow/dist/style.css';
+import '../styles/Flow.scss'
+import '../styles/TextUpdaterNode.scss'
+
+const defaultNodes = [
   {
-    id: '1',
-    data: { label: 'Hello' },
-    position: { x: 0, y: 0 },
+    id: 'a',
     type: 'input',
+    data: { label: 'Node A' },
+    position: { x: -10, y: 0 },
+  },
+
+  {
+    id: 'b',
+    data: { label: 'Node B' },
+    position: { x: -10, y: 75 },
   },
   {
-    id: '2',
-    data: { label: 'World' },
-    position: { x: 100, y: 100 },
+    id: 'c',
+    type: 'output',
+    data: { label: 'Node C' },
+    position: { x: -10, y: 125 },
   },
 ];
 
-const initialEdges = [];
+const defaultEdges = [{ id: 'ea-b', source: 'a', target: 'b' }];
+
+const edgeOptions = {
+  animated: true,
+  style: {
+    stroke: 'white',
+  },
+};
+
+const connectionLineStyle = { stroke: 'white' };
+
+let nodeId = 0;
+
+const rfStyle = {
+  backgroundColor: '#B8CEFF',
+};
+
+const initialNodes = [
+  { id: 'node-1', type: 'textUpdater', position: { x: 0, y: 0 }, data: { value: 123 } },
+];
+// we define the nodeTypes outside of the component to prevent re-renderings
+// you could also use useMemo inside the component
+const nodeTypes = { textUpdater: TextUpdaterNode };
 
 
 function Flow() {
 
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
+  const reactFlowInstance = useReactFlow();
+  const onClick = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      data: {
+        label: `Node ${id}`,
+      },
+    };
+    reactFlowInstance.addNodes(newNode);
+  }, []);
 
-  const onNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    []
-  );
-  const onEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    []
-  );
 
-  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
+  // const [nodes, setNodes] = useState(initialNodes);
+  // const [edges, setEdges] = useState([]);
+
+  // const onNodesChange = useCallback(
+  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+  //   [setNodes]
+  // );
+  // const onEdgesChange = useCallback(
+  //   (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+  //   [setEdges]
+  // );
+  // const onConnect = useCallback(
+  //   (connection) => setEdges((eds) => addEdge(connection, eds)),
+  //   [setEdges]
+  // );
+
   
   return (
     <div style={{ height: '80vh', width:'80vh', right:'0' }}>
+      
       <ReactFlow
-        nodes={nodes}
-        onNodesChange={onNodesChange}
-        edges={edges}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-      >
-        <Background />
-        <Controls />
-      </ReactFlow>
+        defaultNodes={defaultNodes}
+        defaultEdges={defaultEdges}
+        defaultEdgeOptions={edgeOptions}
+        fitView
+        style={{
+          backgroundColor: '#D3D2E5',
+        }}
+        connectionLineStyle={connectionLineStyle}
+      />
+      <button onClick={onClick} className="btn-add">
+        Agregar
+      </button>
+    
+
+      {/* <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      nodeTypes={nodeTypes}
+      fitView
+      style={rfStyle}
+    /> */}
     </div>
   )
 }
 
-export default Flow
+export default function () {
+  return (
+    <ReactFlowProvider>
+      <Flow />
+    </ReactFlowProvider>
+  );
+}
