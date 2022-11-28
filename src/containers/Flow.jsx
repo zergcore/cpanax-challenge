@@ -1,10 +1,14 @@
-import React from 'react'
-import ReactFlow, { Background, Controls } from 'reactflow';
+import React, { useState, useCallback }  from 'react'
+import ReactFlow, { 
+                    Controls, 
+                    Background, 
+                    applyNodeChanges,
+                    applyEdgeChanges,
+                    addEdge,
+                   } from 'reactflow';
 import 'reactflow/dist/style.css';
 
-const edges = [{ id: '1-2', source: '1', target: '2', label: 'to the', type: 'step' }];
-
-const nodes = [
+const initialNodes = [
   {
     id: '1',
     data: { label: 'Hello' },
@@ -18,10 +22,34 @@ const nodes = [
   },
 ];
 
+const initialEdges = [];
+
+
 function Flow() {
+
+  const [nodes, setNodes] = useState(initialNodes);
+  const [edges, setEdges] = useState(initialEdges);
+
+  const onNodesChange = useCallback(
+    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    []
+  );
+  const onEdgesChange = useCallback(
+    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    []
+  );
+
+  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
+  
   return (
     <div style={{ height: '80vh', width:'80vh', right:'0' }}>
-      <ReactFlow nodes={nodes} edges={edges}>
+      <ReactFlow
+        nodes={nodes}
+        onNodesChange={onNodesChange}
+        edges={edges}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+      >
         <Background />
         <Controls />
       </ReactFlow>
