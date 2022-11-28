@@ -20,6 +20,7 @@
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.10.15",
     "@mui/material": "^5.10.15",
+    "@mui/x-data-grid": "^5.17.13",
     "axios": "^1.2.0",
     "babel-loader": "^9.1.0",
     "html-loader": "^4.2.0",
